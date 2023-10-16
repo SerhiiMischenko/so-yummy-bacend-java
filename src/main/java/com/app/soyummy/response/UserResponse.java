@@ -10,8 +10,8 @@ public class UserResponse {
     private ResponseData data;
 
     public UserResponse(ResponseData responseData) {
-        this.status = "200";
-        this.code = "success";
+        this.status = "success";
+        this.code = "200";
         this.data = responseData;
     }
 }

@@ -1,6 +1,7 @@
 package com.app.soyummy.service;
 
 import com.app.soyummy.entity.User;
+import com.app.soyummy.entity.UserDTO;
 import com.app.soyummy.repository.UserRepository;
 import com.app.soyummy.response.ResponseData;
 import com.app.soyummy.response.TokenInit;
@@ -46,10 +47,13 @@ public class UserService {
 
         userRepository.save(newUser);
 
-        TokenInit tokenInit = new TokenInit();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(newUser.getUserName());
+        userDTO.setEmail(newUser.getUserEmail());
+        userDTO.setAvatar(newUser.getAvatar());
+        userDTO.setUserId(newUser.getId());
 
-
-        UserResponse userResponse = new UserResponse(new ResponseData(new TokenInit().getToken(), newUser));
+        UserResponse userResponse = new UserResponse(new ResponseData(new TokenInit().getToken(), userDTO));
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
