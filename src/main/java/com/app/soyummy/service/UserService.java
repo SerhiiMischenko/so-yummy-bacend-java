@@ -2,6 +2,9 @@ package com.app.soyummy.service;
 
 import com.app.soyummy.entity.User;
 import com.app.soyummy.repository.UserRepository;
+import com.app.soyummy.response.ResponseData;
+import com.app.soyummy.response.TokenInit;
+import com.app.soyummy.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +46,11 @@ public class UserService {
 
         userRepository.save(newUser);
 
-        return ResponseEntity.ok(Map.of("message", "User successfully registered"));
+        TokenInit tokenInit = new TokenInit();
+
+
+        UserResponse userResponse = new UserResponse(new ResponseData(new TokenInit().getToken(), newUser));
+
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 }

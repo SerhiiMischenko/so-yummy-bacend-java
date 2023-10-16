@@ -10,9 +10,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String userName;
+    @Column(unique = true)
     private String userEmail;
     private String userPassword;
-
+    private String avatar = "https://res.cloudinary.com/db5awxaxs/image/upload/v1680438156/cld-sample-4.jpg";
 }
