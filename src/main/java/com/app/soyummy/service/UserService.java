@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -58,6 +59,48 @@ public class UserService {
 
         UserResponse userResponse = new UserResponse(new ResponseData(
                 new JwtTokenProvider().generateToken(newUser.getUserName()), userDTO));
+
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> login(Map<String, String> requestBody) {
+        if(requestBody.get("name").isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "missing field name"));
+        }
+        if(requestBody.get("email").isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "missing field email"));
+        }
+        if(requestBody.get("password").isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "missing field password"));
+        }
+
+        Optional<User> userOptional = userRepository.findByUserEmail(requestBody.get("email"));
+        User user = userOptional.orElse(null);
+
+        if(user == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Email invalid"));
+        }
+        if(!user.getUserPassword().equals(requestBody.get("password"))) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Password invalid"));
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(user.getUserName());
+        userDTO.setEmail(user.getUserEmail());
+        userDTO.setAvatar(user.getAvatar());
+        userDTO.setUserId(user.getId());
+
+        UserResponse userResponse = new UserResponse(new ResponseData(user.getToken(), userDTO));
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
