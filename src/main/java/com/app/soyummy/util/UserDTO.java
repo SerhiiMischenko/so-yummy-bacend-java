@@ -1,4 +1,4 @@
-package com.app.soyummy.entity;
+package com.app.soyummy.util;
 
 import lombok.Data;
 
@@ -7,5 +7,5 @@ public class UserDTO {
     private String name;
     private String email;
     private String avatar;
-    private Long userId;
+    private String userId;
 }

@@ -1,10 +1,11 @@
 package com.app.soyummy.service;
 
 import com.app.soyummy.entity.User;
-import com.app.soyummy.entity.UserDTO;
+import com.app.soyummy.util.JwtTokenProvider;
+import com.app.soyummy.util.PasswordEncoder;
+import com.app.soyummy.util.UserDTO;
 import com.app.soyummy.repository.UserRepository;
 import com.app.soyummy.response.ResponseData;
-import com.app.soyummy.response.TokenInit;
 import com.app.soyummy.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +43,10 @@ public class UserService {
         }
 
         User newUser = new User();
+        newUser.setId(UUID.randomUUID().toString());
         newUser.setUserName(requestBody.get("name"));
         newUser.setUserEmail(requestBody.get("email"));
-        newUser.setUserPassword(requestBody.get("password"));
+        newUser.setUserPassword(PasswordEncoder.passwordEncode(requestBody.get("password")));
 
         userRepository.save(newUser);
 
@@ -53,7 +56,8 @@ public class UserService {
         userDTO.setAvatar(newUser.getAvatar());
         userDTO.setUserId(newUser.getId());
 
-        UserResponse userResponse = new UserResponse(new ResponseData(new TokenInit().getToken(), userDTO));
+        UserResponse userResponse = new UserResponse(new ResponseData(
+                new JwtTokenProvider().generateToken(newUser.getUserName()), userDTO));
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }

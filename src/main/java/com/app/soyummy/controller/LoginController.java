@@ -3,17 +3,17 @@ package com.app.soyummy.controller;
 import com.app.soyummy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-public class AuthController {
+public class LoginController {
     private final UserService userService;
 
-    @PostMapping("/auth/signup")
-    public ResponseEntity<?> signup(@RequestBody Map<String, String> requestBody) {
-        return userService.registerUser(requestBody);
+    public ResponseEntity<?> login(@RequestBody Map<String, String> requestBody) {
+        return userService
     }
 }
