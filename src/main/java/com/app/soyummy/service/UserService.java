@@ -66,12 +66,12 @@ public class UserService {
     }
 
     public ResponseEntity<?> login(Map<String, String> requestBody) {
-        if(requestBody.get("email").isEmpty()) {
+        if(requestBody.get("email") == null || requestBody.get("email").isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "missing field email"));
         }
-        if(requestBody.get("password").isEmpty()) {
+        if(requestBody.get("password") == null || requestBody.get("password").isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "missing field password"));
