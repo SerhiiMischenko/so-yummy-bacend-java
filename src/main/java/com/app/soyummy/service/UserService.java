@@ -10,6 +10,7 @@ import com.app.soyummy.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -48,6 +49,7 @@ public class UserService {
         newUser.setUserName(requestBody.get("name"));
         newUser.setUserEmail(requestBody.get("email"));
         newUser.setUserPassword(PasswordEncoder.passwordEncode(requestBody.get("password")));
+        newUser.setToken(new JwtTokenProvider().generateToken(newUser.getUserName()));
 
         userRepository.save(newUser);
 
@@ -58,17 +60,12 @@ public class UserService {
         userDTO.setUserId(newUser.getId());
 
         UserResponse userResponse = new UserResponse(new ResponseData(
-                new JwtTokenProvider().generateToken(newUser.getUserName()), userDTO));
+                newUser.getToken(), userDTO));
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     public ResponseEntity<?> login(Map<String, String> requestBody) {
-        if(requestBody.get("name").isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "missing field name"));
-        }
         if(requestBody.get("email").isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -88,7 +85,11 @@ public class UserService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "Email invalid"));
         }
-        if(!user.getUserPassword().equals(requestBody.get("password"))) {
+        String passwordFromRequest = requestBody.get("password");
+        String hashedPasswordFromDatabase = user.getUserPassword();
+        boolean passwordMatches = BCrypt.checkpw(passwordFromRequest, hashedPasswordFromDatabase);
+
+        if(!passwordMatches) {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(Map.of("message", "Password invalid"));
