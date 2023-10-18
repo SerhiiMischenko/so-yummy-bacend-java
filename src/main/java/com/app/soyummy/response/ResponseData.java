@@ -12,4 +12,8 @@ public class ResponseData {
         this.token = token;
         this.user = user;
     }
+
+    public ResponseData(UserDTO user) {
+        this.user = user;
+    }
 }

@@ -82,7 +82,7 @@ public class UserService {
 
         if(user == null) {
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.FORBIDDEN)
                     .body(Map.of("message", "Email invalid"));
         }
         String passwordFromRequest = requestBody.get("password");
@@ -102,6 +102,40 @@ public class UserService {
         userDTO.setUserId(user.getId());
 
         UserResponse userResponse = new UserResponse(new ResponseData(user.getToken(), userDTO));
+
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> logout(Map<String, String> requestBody) {
+        User findUser = userRepository.findUserByToken(requestBody.get("token"));
+
+        if(findUser == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Not authorized"));
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public ResponseEntity<?> current(Map<String, String> requestBody) {
+        System.out.println(requestBody);
+        User findUser = userRepository.findUserByToken(requestBody.get("token"));
+        System.out.println(findUser);
+
+        if(findUser == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Not authorized"));
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(findUser.getUserName());
+        userDTO.setEmail(findUser.getUserEmail());
+        userDTO.setAvatar(findUser.getAvatar());
+        userDTO.setUserId(findUser.getId());
+
+        UserResponse userResponse = new UserResponse(new ResponseData(userDTO));
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
