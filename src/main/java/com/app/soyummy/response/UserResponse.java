@@ -9,7 +9,6 @@ public class UserResponse {
     private String status;
     private String code;
     private ResponseData data;
-    private UserDTO userDTO;
 
     public UserResponse(ResponseData responseData) {
         this.status = "success";
