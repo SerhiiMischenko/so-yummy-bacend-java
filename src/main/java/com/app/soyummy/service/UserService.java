@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Optional;
@@ -118,9 +119,10 @@ public class UserService {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<?> current(Map<String, String> requestBody) {
-        System.out.println(requestBody);
-        User findUser = userRepository.findUserByToken(requestBody.get("token"));
+    public ResponseEntity<?> current(String authorizationHeader) {
+        String jwtToken = authorizationHeader.replace("Bearer ", "");
+        System.out.println(jwtToken);
+        User findUser = userRepository.findUserByToken(jwtToken);
         System.out.println(findUser);
 
         if(findUser == null) {

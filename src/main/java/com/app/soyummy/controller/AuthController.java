@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @GetMapping("/auth/current")
-    public ResponseEntity<?> current(@RequestBody Map<String, String> requestBody) {
-        return userService.current((requestBody));
+    public ResponseEntity<?> current(@RequestHeader("Authorization") String token) {
+        return userService.current(token);
     }
     }

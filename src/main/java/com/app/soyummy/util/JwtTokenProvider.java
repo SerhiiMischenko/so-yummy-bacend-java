@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final String secret = JwtSecretKeySingleton.getInstance().toString();
-    private final long expirationMilliseconds = 36000;
+    private final long expirationMilliseconds = 36000000;
 
 
     public String generateToken(String username) {
