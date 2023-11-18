@@ -1,9 +1,11 @@
 package com.app.soyummy.response;
 
 import com.app.soyummy.util.UserDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseData {
     private String token;
     private UserDTO user;
