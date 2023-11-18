@@ -14,7 +14,6 @@ public class SoYummyApplication {
 				.load();
 		flyway.migrate();
 		SpringApplication.run(SoYummyApplication.class, args);
-		//SpringApplication.run(SoYummyApplication.class, args);
 	}
 
 }
