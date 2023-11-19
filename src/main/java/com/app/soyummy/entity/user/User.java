@@ -1,4 +1,4 @@
-package com.app.soyummy.entity;
+package com.app.soyummy.entity.user;
 
 import lombok.Data;
 

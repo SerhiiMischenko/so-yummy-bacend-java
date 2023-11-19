@@ -1,7 +1,5 @@
 package com.app.soyummy.response;
 
-import com.app.soyummy.entity.User;
-import com.app.soyummy.util.UserDTO;
 import lombok.Data;
 
 @Data

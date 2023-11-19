@@ -30,6 +30,12 @@ public class AuthController {
 
     @GetMapping("/auth/current")
     public ResponseEntity<?> current(@RequestHeader("Authorization") String token) {
-        return userService.current(token);
+        return userService.currentUser(token);
+    }
+
+    @PatchMapping("/auth/edit")
+    public ResponseEntity<?> edit(@RequestHeader("Authorization") String token,
+                                  @RequestBody Map<String, String> requestBody) {
+        return userService.editUser(token, requestBody);
     }
     }

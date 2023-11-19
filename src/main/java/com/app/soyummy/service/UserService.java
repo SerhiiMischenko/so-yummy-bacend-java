@@ -1,9 +1,9 @@
 package com.app.soyummy.service;
 
-import com.app.soyummy.entity.User;
+import com.app.soyummy.entity.user.User;
 import com.app.soyummy.util.JwtTokenProvider;
 import com.app.soyummy.util.PasswordEncoder;
-import com.app.soyummy.util.UserDTO;
+import com.app.soyummy.entity.user.UserDTO;
 import com.app.soyummy.repository.UserRepository;
 import com.app.soyummy.response.ResponseData;
 import com.app.soyummy.response.UserResponse;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.Map;
 import java.util.Optional;
@@ -119,11 +118,9 @@ public class UserService {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<?> current(String authorizationHeader) {
+    public ResponseEntity<?> currentUser(String authorizationHeader) {
         String jwtToken = authorizationHeader.replace("Bearer ", "");
-        System.out.println(jwtToken);
         User findUser = userRepository.findUserByToken(jwtToken);
-        System.out.println(findUser);
 
         if(findUser == null) {
             return ResponseEntity
@@ -136,6 +133,42 @@ public class UserService {
         userDTO.setEmail(findUser.getUserEmail());
         userDTO.setAvatar(findUser.getAvatar());
         userDTO.setUserId(findUser.getId());
+
+        UserResponse userResponse = new UserResponse(new ResponseData(userDTO));
+
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> editUser(String authorizationHeader, Map<String, String> requestBody) {
+        String jwtToken = authorizationHeader.replace("Bearer ", "");
+        User findUser = userRepository.findUserByToken(jwtToken);
+
+        if(findUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Not authorized"));
+        }
+
+        if(requestBody.get("name").isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "name is required"));
+        }
+
+        if(!(requestBody.get("avatar").toLowerCase().endsWith(".jpg") ||
+                requestBody.get("avatar").toLowerCase().endsWith(".jpeg") ||
+                requestBody.get("avatar").toLowerCase().endsWith(".png"))){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message",
+                            "errors in the process of processing and uploading images to Cloudinary"));
+        }
+
+        findUser.setUserName(requestBody.get("name"));
+        findUser.setAvatar(requestBody.get("avatar"));
+
+        userRepository.save(findUser);
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(findUser.getUserName());
+        userDTO.setAvatar(findUser.getAvatar());
 
         UserResponse userResponse = new UserResponse(new ResponseData(userDTO));
 

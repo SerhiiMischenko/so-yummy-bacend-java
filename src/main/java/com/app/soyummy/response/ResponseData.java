@@ -1,6 +1,6 @@
 package com.app.soyummy.response;
 
-import com.app.soyummy.util.UserDTO;
+import com.app.soyummy.entity.user.UserDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
